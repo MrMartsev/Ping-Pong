@@ -1,0 +1,62 @@
+from pygame import *
+
+fone_color = (135, 45, 12)
+display.set_caption("Пинг-понг")
+clock = time.Clock()
+
+window = display.set_mode((500, 500))
+window.fill(fone_color)
+
+class GameSprite(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, player_w, player_h, player_speed):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image), (player_w, player_h))
+        self.speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
+    def collidepoint(self, x, y):
+        return self.rect.collidepoint(x, y)
+
+class Player_1(GameSprite):
+
+    def update(self):
+        keys = key.get_pressed()
+        if keys[K_w] and self.rect.y > 5:
+            self.rect.y -= self.speed 
+        if keys[K_s] and self.rect.y < 400:
+            self.rect.y += self.speed 
+
+class Player_2(GameSprite):
+
+    def update(self):
+        keys = key.get_pressed()
+        if keys[K_UP] and self.rect.y > 5:
+            self.rect.y -= self.speed 
+        if keys[K_DOWN] and self.rect.y < 400:
+            self.rect.y += self.speed 
+
+platform_1 = Player_1("platform.png", 30, 200, 30, 100, 5)
+platform_2 = Player_2("platform.png", 430, 200, 30, 100, 5)
+
+game = True
+while game:
+    for e in event.get():
+        if e.type == QUIT:
+            game = False
+    
+    window.fill(fone_color)
+    platform_1.reset()
+    platform_1.update()
+
+    platform_2.reset()
+    platform_2.update()
+    
+    display.update() 
+    clock.tick(40)
+
+display.update()
