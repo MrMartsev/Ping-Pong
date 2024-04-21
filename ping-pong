@@ -7,6 +7,9 @@ clock = time.Clock()
 window = display.set_mode((500, 500))
 window.fill(fone_color)
 
+speed = 4
+speed_y = 4
+
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_w, player_h, player_speed):
         super().__init__()
@@ -21,6 +24,9 @@ class GameSprite(sprite.Sprite):
 
     def collidepoint(self, x, y):
         return self.rect.collidepoint(x, y)
+    
+    def colliderect(self, rect):
+        return self.rect.colliderect(rect)
 
 class Player_1(GameSprite):
 
@@ -28,7 +34,7 @@ class Player_1(GameSprite):
         keys = key.get_pressed()
         if keys[K_w] and self.rect.y > 5:
             self.rect.y -= self.speed 
-        if keys[K_s] and self.rect.y < 400:
+        if keys[K_s] and self.rect.y < 395:
             self.rect.y += self.speed 
 
 class Player_2(GameSprite):
@@ -37,11 +43,13 @@ class Player_2(GameSprite):
         keys = key.get_pressed()
         if keys[K_UP] and self.rect.y > 5:
             self.rect.y -= self.speed 
-        if keys[K_DOWN] and self.rect.y < 400:
+        if keys[K_DOWN] and self.rect.y < 395:
             self.rect.y += self.speed 
 
 platform_1 = Player_1("platform.png", 30, 200, 30, 100, 5)
 platform_2 = Player_2("platform.png", 430, 200, 30, 100, 5)
+
+ball = GameSprite("ball.png", 225, 225, 50, 50, 5)
 
 game = True
 while game:
@@ -55,7 +63,18 @@ while game:
 
     platform_2.reset()
     platform_2.update()
-    
+
+    ball.reset()
+    ball.rect.x += speed
+    ball.rect.y += speed_y
+
+    if ball.rect.y >= 450 or ball.rect.y <= 50:
+        speed_y *= -1
+
+    if ball.colliderect(platform_1.rect) or ball.colliderect(platform_2.rect):
+        speed *= -1
+
+
     display.update() 
     clock.tick(40)
 
